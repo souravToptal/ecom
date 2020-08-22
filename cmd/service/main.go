@@ -1,13 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/jinzhu/gorm"
-    _ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	
+	"github.com/souravToptal/ecom/internal/product"
+	"github.com/souravToptal/ecom/cmd/service/handlers"
     // "github.com/lib/pq"
 )
 
@@ -21,16 +23,21 @@ func main () {
     if err != nil {
         log.Fatal(err)
     }
-    defer db.Close()
-
-	fmt.Println(db)
+	defer db.Close()
+	
+	// Migrate the schema
+	db.AutoMigrate(&product.Product{})
 
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+
+	productService := product.NewProductService(db)
+	productHandler := handlers.NewProductHandler(productService)
   
 	// Routes
 	e.GET("/", hello)
+	e.POST("/products", productHandler.CreateProduct)
   
 	// Start server
 	e.Logger.Fatal(e.Start(":1324"))

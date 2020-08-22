@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3'
 
 networks:
   shared-network:
@@ -16,12 +16,15 @@ services:
       - "8080:8080"
     volumes:
       - ./cockroach-data/roach1:/cockroach/cockroach-data
-  api:
-    container_name: api
-    networks:
-      - shared-network
-    image: ecom/api-amd64:1.0
-    ports:
-      - 1323:1323
-    environment:
-      - HOST_ADDR=:80
+  # api:
+  #   container_name: api
+  #   restart: on-failure
+  #   depends_on:
+  #     - roach
+  #   networks:
+  #     - shared-network
+  #   image: ecom/api-amd64:1.0
+  #   ports:
+  #     - 1323:1323
+  #   environment:
+  #     - HOST_ADDR=:80
