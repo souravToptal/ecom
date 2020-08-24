@@ -5,22 +5,44 @@ networks:
     driver: bridge
 
 services:
-  roach:
-    container_name: roach
+  roach1:
+    container_name: roach1
     networks:
       - shared-network
-    image: cockroachdb/cockroach:v1.1.3
+    image: cockroachdb/cockroach
     command: start --insecure
     ports:
       - "26257:26257"
       - "8080:8080"
     volumes:
       - ./cockroach-data/roach1:/cockroach/cockroach-data
+
+  roach2:
+    container_name: roach2
+    image: cockroachdb/cockroach
+    command: start --insecure --join=roach1
+    volumes:
+      - ./cockroach-data/roach2:/cockroach/cockroach-data
+    depends_on:
+      - roach1
+    networks:
+      - shared-network
+
+  roach3:
+    container_name: roach3
+    image: cockroachdb/cockroach
+    command: start --insecure --join=roach1
+    volumes:
+      - ./cockroach-data/roach3:/cockroach/cockroach-data
+    depends_on:
+      - roach1
+    networks:
+      - shared-network
   # api:
   #   container_name: api
   #   restart: on-failure
   #   depends_on:
-  #     - roach
+  #     - roach1
   #   networks:
   #     - shared-network
   #   image: ecom/api-amd64:1.0
