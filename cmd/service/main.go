@@ -39,6 +39,8 @@ func main() {
 	e.GET("/health", health)
 	e.POST("/products", productHandler.CreateProduct)
 	e.GET("/products/:id", productHandler.GetProduct)
+	e.PUT("/products", productHandler.UpdateProduct)
+	e.DELETE("/products/:id", productHandler.DeleteProduct)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1324"))
